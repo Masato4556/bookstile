@@ -1,0 +1,12 @@
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - "12000:3000"
+    volumes:
+      - ./web:/web
+      - node_modules:/web/node_modules
+    command: sh -c "npm run dev"
+volumes:
+  node_modules:

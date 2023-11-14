@@ -29,7 +29,7 @@ const formSchema = z.object({
       z
         .number({ invalid_type_error: "数値を入力してください" })
         .min(1, "1円以上を指定してください")
-        .max(1000000, "1000000円以下を指定してください")
+        .max(1000000, "1000000円以下を指定してください"),
     ),
 
   // price: z.number().min(0).max(1000000),
@@ -41,7 +41,7 @@ const formSchema = z.object({
       z
         .number({ invalid_type_error: "数値を入力してください" })
         .min(1, "1個以上を指定してください")
-        .max(20, "20個以下を指定してください")
+        .max(20, "20個以下を指定してください"),
     ),
 });
 
@@ -63,13 +63,6 @@ const LoginForm = () => {
     console.log(values);
     console.log(form.getValues());
   }
-
-  const zenkakuToHankaku = (x: string) => {
-    return String(x).replace(/[０-９，､．。ｅＥ]/g, (s) => {
-      // 文字コードを取得し、差分を計算して半角に変換
-      return String.fromCharCode(s.charCodeAt(0) - 0xfee0);
-    });
-  };
 
   const priceFormat = (x: string) => {
     if (x == "") return "";

@@ -35,7 +35,7 @@ const formSchema = z.object({
     ),
 })
 
-const LoginForm = () => {
+const SandboxForm = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -101,4 +101,4 @@ const LoginForm = () => {
   )
 }
 
-export default LoginForm
+export default SandboxForm

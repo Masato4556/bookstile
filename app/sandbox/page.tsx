@@ -1,12 +1,11 @@
 'use client'
 
-import LoginForm from '@/components/sandbox/sandboxForm'
-import { useState } from 'react'
+import SandboxForm from '@/components/sandbox/sandboxForm'
 
 export default function Home() {
   return (
     <div className='m-4'>
-      <LoginForm />
+      <SandboxForm />
     </div>
   )
 }

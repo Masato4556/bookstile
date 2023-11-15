@@ -11,37 +11,27 @@ import DecimalInput from './sandboxDecimalInput'
 
 const formSchema = z.object({
   itemname: z.string().min(1, '入力してください').max(50),
-  price: z.coerce
+  price: z
     .string()
     .min(1, '入力してください')
-    .transform((v) => Number(v))
-    .pipe(
-      z
-        .number({ invalid_type_error: '数値を入力してください' })
-        .min(1, '1円以上を指定してください')
-        .max(1000000, '1000000円以下を指定してください'),
-    ),
+    .regex(/^([+-]?\d+)(\.\d*)?([eE][+-]?\d+)?$/, "数字を入力してください")
+    .refine((v)=>Number(v) >= 1, "1円以上を指定してください")
+    .refine((v)=>Number(v) <= 1000000, "1000000円以下を指定してください"),
 
   // price: z.number().min(0).max(1000000),
   count: z
     .string()
     .min(1, '入力してください')
-    .transform((v) => Number(v))
-    .pipe(
-      z
-        .number({ invalid_type_error: '数値を入力してください' })
-        .min(1, '1個以上を指定してください')
-        .max(20, '20個以下を指定してください'),
-    ),
-})
+    .regex(/^([+-]?\d+)(\.\d*)?([eE][+-]?\d+)?$/, "数字を入力してください")
+}) 
 
 const SandboxForm = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       itemname: '',
-      price: 1000,
-      count: 1,
+      price: "1000",
+      count: "1",
     },
     mode: 'onBlur',
     reValidateMode: 'onSubmit',

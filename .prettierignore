@@ -3,6 +3,8 @@ build
 coverage
 package.json
 package-lock.json
+dockerfile
+docker-compose.yaml
 
 # dotfile
 .env*

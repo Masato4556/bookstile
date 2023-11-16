@@ -1,34 +1,34 @@
 'use client'
 
-import {
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
-import { FieldValues, Path, UseFormReturn } from 'react-hook-form'
-import { Input } from '@/components/ui/input'
-import { useState } from 'react'
+import { FieldPathValue, FieldValues, Path, PathValue, UseFormReturn } from 'react-hook-form'
+import { SandboxBaseInput } from './sandboxBaseInput'
 
-type Props<T extends FieldValues> = {
+type FieldByType<T extends FieldValues, K> = {
+  [P in Path<T>]: K extends FieldPathValue<T, P> ? P : never;
+}[Path<T>];
+
+type Props<T extends FieldValues, K> = {
   form: UseFormReturn<T, any, undefined>
   label: string
-  name: Path<T>
-  blurFormat?: (x: string) => string
+  name: FieldByType<T, K>
 }
 
-const DecimalInput = <T extends FieldValues>({
-  form,
-  label,
-  name,
-  blurFormat = (x) => x,
-}: Props<T>) => {
-  const [focus, setFocus] = useState(false)
-  const toggle = () => {
-    setFocus(!focus)
+const DecimalInput = <T extends FieldValues>(props: Props<T, string>) => {
+  // FIXME: asを用いないようにする
+  const onBlurFormat = (x: PathValue<T, FieldByType<T, string>>): PathValue<T, FieldByType<T, string>> => {
+    if (x == '') return '' as PathValue<T, FieldByType<T, string>>
+    const parsedX = Number(x)
+    if (isNaN(parsedX)) {
+      return x
+    }
+    return parsedX.toLocaleString() as PathValue<T, FieldByType<T, string>>
   }
+
+  const removeComma = (x: string) => {
+    if (!/^[+-]?0*[1-9]\d{0,2}(,\d{3})*(\.\d*)?([eE][+-]?\d+)?$/.test(x)) return x
+    return x.replace(/[,]/g, '')
+  }
+
   const zenkakuToHankaku = (x: string) => {
     // TODO: 小数点、桁区切りも対応する
     return String(x).replace(/[０-９]/g, (s) => {
@@ -37,42 +37,13 @@ const DecimalInput = <T extends FieldValues>({
     })
   }
 
-  const removeComma = (x: string) => {
-    // TODO: 正しい位置に桁区切りがあるときだけ除去する
-    return String(x).replace(/[,]/g, '')
-  }
-
-  const format = (x: string) => {
-    return removeComma(zenkakuToHankaku(x))
+  // FIXME: asを用いないようにする
+  const convert = (x: PathValue<T, FieldByType<T, string>>): PathValue<T, FieldByType<T, string>> => {
+    return removeComma(zenkakuToHankaku(x)) as PathValue<T, FieldByType<T, string>>
   }
 
   return (
-    <FormField
-      control={form.control}
-      name={name}
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>{label}</FormLabel>
-          <FormControl>
-            {focus ? (
-              <Input
-                {...field}
-                onBlur={() => {
-                  toggle()
-                  form.setValue(name, format(field.value) as any, {
-                    shouldValidate: true,
-                  }) // FIXME: 型の指定がうまくいっていないのanyを用いている誤魔化さないようにする
-                }}
-              />
-            ) : (
-              <Input value={blurFormat(field.value)} readOnly onFocus={toggle} />
-            )}
-          </FormControl>
-          {/* <FormDescription>This is your public display name.</FormDescription> */}
-          <FormMessage />
-        </FormItem>
-      )}
-    />
+    <SandboxBaseInput {...props} convert={convert} onBlurFormat={onBlurFormat} />
   )
 }
 

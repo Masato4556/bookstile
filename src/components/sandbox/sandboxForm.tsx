@@ -44,23 +44,6 @@ const SandboxForm = () => {
     console.log(form.getValues())
   }
 
-  const priceFormat = (x: string) => {
-    if (x == '') return ''
-    const parsedX = Number(x)
-    if (isNaN(parsedX)) {
-      return x
-    }
-    return parsedX.toLocaleString() + '円'
-  }
-
-  const countFormat = (x: string) => {
-    if (x == '') return ''
-    const parsedX = Number(x)
-    if (isNaN(parsedX)) {
-      return x
-    }
-    return parsedX.toLocaleString() + '個'
-  }
 
   return (
     <Form {...form}>
@@ -77,13 +60,11 @@ const SandboxForm = () => {
           form={form}
           label={'価格'}
           name={'price'}
-          blurFormat={priceFormat}
         />
         <DecimalInput
           form={form}
           label={'個数'}
           name={'count'}
-          blurFormat={countFormat}
         />
         <Button type='submit'>Submit</Button>
       </form>
